@@ -1,6 +1,6 @@
-inputs    = $(wildcard *.asm)
-objects   = $(patsubst %.asm,%.o,$(inputs))
-outputs   = $(patsubst %.asm,%,$(inputs))
+inputs	= $(wildcard *.asm)
+objects	= $(patsubst %.asm,%.o,$(inputs))
+outputs	= $(patsubst %.asm,%,$(inputs))
 
 all: $(outputs)
 
