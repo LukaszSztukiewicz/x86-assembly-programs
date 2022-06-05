@@ -5,12 +5,13 @@ extern  printf
 extern  scanf
 
 section .data
-	input_message db 'This is a program that computes the square root value.', 0xA,'Enter a double: ', 0
-    output_message db 0xA, 'The result is: ', 0
-    io_format	db '%lf', 0xA, 0
+	input_message db 'This is a program which will calculate square root of a sequence of numbers with step of 0.125', 0xA,'Enter a stopping criterion: ', 0
+    output_message db  'sqrt(%f) = %f ',0xA, 0
+    i_format	db '%lf', 0xA, 0
+    step dq 0.125
 
 section .bss
-	var	resq 1
+	end	resq 1
 
 section .text
 main:
@@ -19,22 +20,26 @@ main:
 	mov	al, 0
     call	printf wrt ..plt ;display program description
 
-    lea	rdi, [io_format]
-    lea rsi, [var]
+    lea	rdi, [i_format]
+    lea rsi, [end]
     mov	al, 0
     call	scanf wrt ..plt ;reading the float
     
-    ;computing the square root
-    movlpd	xmm5, [var]
-    sqrtsd  xmm6, xmm5; result stored in xmm6
-
-    print_result:
-    lea rdi, [output_message]
-    call	printf wrt ..plt
-    mov al, 1
-    lea rdi, [io_format]
-    movq  xmm0, xmm6
-    call	printf wrt ..plt
+    sub     rdx,  rdx
+    movq	xmm6, rdx; d=0
+    movq	xmm7, [step]
+    movlpd	xmm8, [end]; stopping criterion
+    loop_step_0125:
+    addsd    xmm6, xmm7
+    movq	 xmm0, xmm6
+    sqrtsd   xmm1, xmm0; result stored in xmm6
+    lea      rdi, [output_message]
+    mov      al , 2
+    call     printf wrt ..plt ;display result
+    cmpnltsd  xmm0, xmm8
+    movq     rax, xmm0
+    cmp      rax, 0
+    jz loop_step_0125
 
     return:
     mov	rax, 0; success
