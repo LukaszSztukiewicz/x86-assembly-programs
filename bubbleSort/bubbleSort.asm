@@ -64,7 +64,7 @@ section .text
         jne     print_array_loop
 
     return:
-        lea     rdi, [nl] ;first arg
+        lea     rdi, [nl] ;newline
         call    printf wrt ..plt
         add     rsp, 8; adjust stack pointer
         sub     rax, rax; return 0
