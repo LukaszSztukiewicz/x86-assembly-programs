@@ -16,15 +16,13 @@ section .text
     main:
         sub     rsp, 8 ;align to 16bit in stack
         mov     r15, 0 ;store n in register for optimization
-        lea     r14, [array] ;load effective address of array to register
        
     read_array_loop:
         lea     rdi, [i_format] ;first arg
-        mov     rsi, r14; second arg
+        lea     rsi, [array] ;load effective address of array to register
         mov     al, 0 ;no floating point args
         sub     rax, rax;clear return value
         call    scanf wrt ..plt
-        add     r14, 4 ;increment array pointer
         inc     r15 ;increment n
         cmp     r15, 100 ;check if n is 100
         jge     do_bubble_sort
@@ -32,8 +30,25 @@ section .text
         jz      read_array_loop
 
     do_bubble_sort:
-        mov    qword [n], r15 ;store n back to memory
-        
+        mov    dword [n], r15 ;store n back to memory
+        mov    r11, 0 ;outer loop counter
+    outer_loop:
+        mov    rcx, dword [n] ;inner counter
+        dec    rcx
+    inner_loop:
+        mov    r8, dword [array + 4*rcx] ;load first element
+        mov    r9, dword [array + 4*rcx - 4] ;load second element
+        cmp    r8, r9 ;compare fir
+        jg     noswap
+        xchg   r8, r9
+    noswap:
+        mov    dword [array + 4*rcx], r8 ;store first element
+        mov    dword [array + 4*rcx - 4], r9 ;store second element
+        loop inner_loop
+        inc    r11 ;increment outer loop counter
+        cmp    r11, dword [n] ;check if outer loop counter is equal to n
+        jl     outer_loop
+
     print_array:
         mov     r15, qword [n] ;store number of elements in register
         lea     rdi, [o_format] ;first arg
