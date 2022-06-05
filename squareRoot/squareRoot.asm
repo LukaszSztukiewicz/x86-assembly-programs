@@ -7,7 +7,8 @@ extern  scanf
 section .data
 	input_message db 'This is a program which will calculate square root of a sequence of numbers with step of 0.125', 0xA,'Enter a stopping criterion: ', 0
     output_message db  'sqrt(%f) = %f ',0xA, 0
-    i_format	db '%lf', 0xA, 0
+    i_format	db '%lf', 0
+    o_format	dq '%u', 0xA, 0
     step dq 0.125
 
 section .bss
@@ -27,17 +28,21 @@ main:
     
     sub     rdx,  rdx
     movq	xmm6, rdx; d=0
-    movq	xmm7, [step]
+    movlpd	xmm7, [step]
     movlpd	xmm8, [end]; stopping criterion
     loop_step_0125:
     addsd    xmm6, xmm7
-    movq	 xmm0, xmm6
-    sqrtsd   xmm1, xmm0; result stored in xmm6
+    movsd	 xmm0, xmm6
+    sqrtsd   xmm1, xmm0; result stored in xmm1
     lea      rdi, [output_message]
     mov      al , 2
     call     printf wrt ..plt ;display result
-    cmpnltsd  xmm0, xmm8
+    movsd	 xmm0, xmm6
+    cmpltsd  xmm0, xmm8
     movq     rax, xmm0
+    ;lea      rdi, [o_format]
+    ;mov      al , 0
+    ;call     printf wrt ..plt ;debug
     cmp      rax, 0
     jz loop_step_0125
 
