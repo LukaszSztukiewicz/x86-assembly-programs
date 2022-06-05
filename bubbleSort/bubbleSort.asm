@@ -5,25 +5,26 @@ extern  printf
 extern  scanf
 
 section .data
-    i_format       dq '%d', 0
-    o_format       dq '%d ',0
+    i_format       db '%d', 0
+    o_format       db '%d ', 0
 
 section .bss
-    array          resq 100
-    n              resq 1
+    array          resd 100
+    n              resd 1
 
 section .text
     main:
         sub     rsp, 8 ;align to 16bit in stack
         mov     r15, 0 ;store n in register for optimization
         lea     r14, [array] ;load effective address of array to register
-        lea     rdi, [i_format] ;first arg
-        mov     al, 0 ;no floating point args
+       
     read_array_loop:
+        lea     rdi, [i_format] ;first arg
         mov     rsi, r14; second arg
+        mov     al, 0 ;no floating point args
         sub     rax, rax;clear return value
         call    scanf wrt ..plt
-        add     r14, 8 ;increment array pointer
+        add     r14, 4 ;increment array pointer
         inc     r15 ;increment n
         cmp     r15, 100 ;check if n is 100
         jge     do_bubble_sort
