@@ -9,8 +9,9 @@ section .data
     o_format       db '%d ', 0
 
 section .bss
+    n              resq 1   
     array          resd 100
-    n              resd 1
+    
 
 section .text
     main:
@@ -30,23 +31,24 @@ section .text
         jz      read_array_loop
 
     do_bubble_sort:
-        mov    dword [n], r15 ;store n back to memory
+        mov    qword [n], r15 ;store n back to memory
         mov    r11, 0 ;outer loop counter
     outer_loop:
-        mov    rcx, dword [n] ;inner counter
+        mov    rcx, qword [n] ;inner counter
         dec    rcx
     inner_loop:
-        mov    r8, dword [array + 4*rcx] ;load first element
-        mov    r9, dword [array + 4*rcx - 4] ;load second element
-        cmp    r8, r9 ;compare fir
+        ;mov    r8d, dword [array + 4*rcx] ;load first element
+        ;mov    r9d, dword [array + 4*rcx - 4] ;load second element
+        cmp    r8d, r9d
         jg     noswap
-        xchg   r8, r9
+        xchg   r8d, r9d
     noswap:
-        mov    dword [array + 4*rcx], r8 ;store first element
-        mov    dword [array + 4*rcx - 4], r9 ;store second element
+        mov    r12, qword [array]
+        mov    [r12 + rcx*4], r8d ;store first element
+        ;mov    dword [array + 4*rcx - 4], r9d ;store second element
         loop inner_loop
         inc    r11 ;increment outer loop counter
-        cmp    r11, dword [n] ;check if outer loop counter is equal to n
+        cmp    r11, r15 ;check if outer loop counter is equal to n
         jl     outer_loop
 
     print_array:
@@ -56,7 +58,7 @@ section .text
         mov     al, 0 ;no floating point args
     print_array_loop:
         dec     r15 ;decrement n
-        mov     rsi, [r11 + r15*8]; second arg
+        ;mov     rsi, [r11 + r15*8]; second arg
         call    printf wrt ..plt
         cmp     r15, 0 ;check if n is 0
         jne     print_array_loop
