@@ -7,6 +7,7 @@ extern  scanf
 section .data
     i_format       db '%d', 0
     o_format       db '%d ', 0
+    nl             db 0xA, 0
 
 section .bss
     n              resq 1   
@@ -63,6 +64,8 @@ section .text
         jne     print_array_loop
 
     return:
+        lea     rdi, [nl] ;first arg
+        call    printf wrt ..plt
         add     rsp, 8; adjust stack pointer
         sub     rax, rax; return 0
         ret
